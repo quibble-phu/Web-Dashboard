@@ -1,0 +1,142 @@
+body {
+            background: #f0f2f5;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container-box {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+                0 10px 10px rgba(0, 0, 0, 0.22);
+            position: relative;
+            overflow: hidden;
+            width: 900px;
+            min-height: 550px;
+            max-width: 100%;
+
+            margin: 60px auto;
+            /* Push below navbar */
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container-box.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+        }
+
+        .container-box.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+        }
+
+        .auth-form {
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 50px;
+            height: 100%;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+
+        }
+
+
+
+        .form-control {
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            margin: 15px 0;
+        }
+
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container-box.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50));
+            color: #fff;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container-box.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+            left: 0;
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container-box.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .container-box.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        .btn-outline-light {
+            border-radius: 20px;
+            padding: 10px 30px;
+        }

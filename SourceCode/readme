@@ -1,0 +1,9 @@
+cd workspace
+git init
+git status
+git reset
+git add .
+git commit -m ""
+
+git push -u origin main        
+git remote add origin https://github.com/quibble-phu/Web-Dashboard.git

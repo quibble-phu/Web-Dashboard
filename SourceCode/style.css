@@ -1,0 +1,138 @@
+
+        body {
+            overflow-x: hidden;
+            background-color: #ffffff !important;
+        }
+
+        #content {
+        background-color: #ffffff !important;
+        
+        }
+    
+        #sidebar {
+            width: 250px;
+            transition: all 0.3s ease;
+            box-shadow: 3px 0 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        #sidebar.collapsed {
+            width: 70px;
+        }
+
+        #sidebar .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 70px;
+            padding: 0 1rem;
+            border-bottom: 1px solid #444;
+
+
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: #495057;
+
+        }
+
+        .sidebar-nav i {
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-text {
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        #sidebar.collapsed .sidebar-text {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #content {
+            margin-left: 250px;
+            transition: all 0.3s ease;
+
+
+        }
+
+        #content.full {
+            margin-left: 70px;
+
+        }
+
+        #top-navbar {
+            padding: 0;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 3px 0 8px rgba(0, 0, 0, 0.3);
+
+        }
+
+        #top-navbar.collapsed {
+            padding-left: 10px;
+
+        }
+
+        .sidebar-header i {
+            font-size: 1.5rem;
+        }
+
+        .sidebar-header .sidebar-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .sidebar-search {
+            padding: 0.5rem 1rem;
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            background-color: #495057;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-search input::placeholder {
+            color: #ccc;
+        }
+
+        #sidebar.collapsed .sidebar-search {
+            display: none;
+
+        }
+
+        #top-navbar a {
+            font-size: 1rem;
+            color: #333;
+            transition: color 0.2s;
+            
+        }
+
+        #top-navbar a:hover {
+            color: #0d6efd;
+            /* สีตอน hover */
+        }
+        
