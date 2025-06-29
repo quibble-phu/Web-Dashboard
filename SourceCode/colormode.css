@@ -1,0 +1,110 @@
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    background-color: #ba9b78 !important;
+    color: #000000 !important;
+  }
+
+  .container-fluid {
+    background-color: #ba9b78 !important;
+  }
+  #content {
+    background-color: #ba9b78 !important;
+  }
+
+  /* กล่องข้อมูล เช่น card หรือกล่อง upload */
+  .card,
+  .container-box,
+  .form-container,
+  .custom-dark-box {
+    background-color: #1e1e1e !important;
+    /* กล่องเป็นสีดำ */
+    color: #ffffff !important;
+    border: 1px solid #444;
+  }
+
+  .form-control {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+    border: 1px solid #555;
+  }
+
+  .btn-primary,
+  .btn-success,
+  .btn-warning {
+    filter: brightness(1.2);
+    /* เพิ่มความสว่างให้ปุ่มดูเด่นขึ้น */
+  }
+
+  /* ตัวหนังสือ footer สีดำ */
+  footer,
+  footer p,
+  footer a {
+    color: #000000 !important;
+  }
+
+  #top-navbar {
+    background-color: rgb(51, 51, 51) !important;
+    /* ตัวอย่างพื้นหลัง navbar สีเข้ม */
+    border-color: #333 !important;
+  }
+
+  #top-navbar .navbar-brand span {
+    color: #ffffff !important;
+    /* เปลี่ยนสีตัวหนังสือเป็นขาว */
+  }
+
+  /* ถ้าต้องการเปลี่ยนสีลิงก์ใน navbar ด้วย */
+  #top-navbar a {
+    color: #ffffff !important;
+  }
+}
+
+#toggleSidebar {
+  color: white;
+  border: 1px solid white;
+}
+
+@media (prefers-color-scheme: light) {
+  #top-navbar {
+    background-color: #ffbb00 !important;
+    /* ตัวอย่างพื้นหลัง navbar สีเข้ม */
+    border-color: #ffc800 !important;
+    color: #ffffff !important;
+  }
+
+  #top-navbar .navbar-brand span {
+    color: #ffffff !important;
+    /* เปลี่ยนสีตัวหนังสือเป็นขาว */
+  }
+
+  /* Light mode */
+  #toggleSidebar {
+    color: #ffffff;
+    border: 1px solid #ffffff;
+  }
+
+  html,
+  body {
+    background-color: #ffedcf !important;
+    color: #000000 !important;
+  }
+  .card,
+  .container-box,
+  .form-container,
+  .custom-dark-box {
+    background-color: #ffffff !important;
+  
+    color: #000000 !important;
+    
+  }
+  .container-fluid {
+    background-color: #ffedcf !important;
+  }
+  #content {
+    background-color: #ffedcf !important;
+  }
+   #top-navbar a {
+    color: #ffffff !important;
+  }
+}
