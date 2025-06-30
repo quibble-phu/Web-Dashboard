@@ -30,7 +30,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
     <?php include('head.php'); ?>
     <link href="style.css" rel="stylesheet">
     <link href="colormode.css" rel="stylesheet">
-    
+
 </head>
 
 <body>
@@ -48,7 +48,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
         <!-- content -->
         <div class="card mt-4 ">
             <div class="card-header bg-primary text-white">
-                รายชื่อผู้ใช้ทั้งหมด
+               <i class="bi bi-incognito fs-4"></i> <span class="fs-4"><strong>All Users</strong> </span> 
             </div>
             <div class="card-body table-responsive">
                 <table class="table table-bordered table-striped" id="myTable">
@@ -68,9 +68,17 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                             $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id ASC");
                             $stmt->execute();
                             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                            $i = 1;
 
                             foreach ($users as $user) {
+                                $canDelete = false;
+
+                                // เงื่อนไขการลบ
+                                if ($userdata['role'] === 'admin' && $user['id'] != $userdata['id']) {
+                                    $canDelete = true;
+                                } elseif ($userdata['role'] === 'co-admin' && $user['role'] === 'user') {
+                                    $canDelete = true;
+                                }
+
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($user['id']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['username']) . "</td>";
@@ -78,18 +86,22 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                                 echo "<td>" . htmlspecialchars($user['password']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['role']) . "</td>";
                                 echo "<td>
-                                <a href='admin-edit.php?id={$user['id']}' class='btn btn-sm btn-warning'>แก้ไข</a>
-                                <a href='delete-user.php?id={$user['id']}' class='btn btn-sm btn-danger' >ลบ</a>
+                                <a href='admin-edit.php?id={$user['id']}' class='btn btn-sm btn-warning'>Edit</a> ";
 
-                              </td>";
-                                echo "</tr>";
-                                $i++;
+                                if ($canDelete) {
+                                    echo "<button class='btn btn-sm btn-danger' onclick='confirmDelete({$user['id']})'>Delete</button>";
+                                } else {
+                                    echo "<button class='btn btn-sm btn-danger' onclick='showDeleteError()'>Delete</button>";
+                                }
+
+                                echo "</td></tr>";
                             }
                         } catch (PDOException $e) {
-                            echo "<tr><td colspan='5'>เกิดข้อผิดพลาด: " . $e->getMessage() . "</td></tr>";
+                            echo "<tr><td colspan='6'>เกิดข้อผิดพลาด: " . $e->getMessage() . "</td></tr>";
                         }
                         ?>
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -108,6 +120,34 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
     <!-- on off menu -->
     <script src="main.js"></script>
+
+    <script>
+        function confirmDelete(userId) {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "คุณต้องการลบผู้ใช้นี้ใช่หรือไม่?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'ลบ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `admin-delete.php?id=${userId}`;
+                }
+            });
+        }
+
+        function showDeleteError() {
+            Swal.fire({
+                icon: 'error',
+                title: 'ไม่สามารถลบได้',
+                text: 'คุณไม่มีสิทธิ์ในการลบผู้ใช้นี้'
+            });
+        }
+    </script>
+
 
 </body>
 

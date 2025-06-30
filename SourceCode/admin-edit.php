@@ -153,7 +153,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                         <?php endif; ?>
                     </select>
                 </div>
-                 <button type="submit" name="update" id="confirm" style="display:none;" ></button>            
+                <button type="submit" name="update" id="confirm" style="display:none;" ></button>            
                 <button type="button"  class="btn btn-success" onclick="confirmUpdate()" >Save</button>
                 <a href="admin-panel.php" class="btn btn-danger">Cancel</a>
             </form>
