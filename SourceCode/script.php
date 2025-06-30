@@ -35,7 +35,7 @@
       buttons: [{
           extend: 'copy',
           text: '<i class="fas fa-copy"></i> Copy',
-          className: 'btn btn-dark'
+          className: 'btn btn-seccondary'
         },
         {
           extend: 'excel',

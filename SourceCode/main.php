@@ -71,6 +71,7 @@ if (!isset($_SESSION['user_id'])) {
     <script src="main.js"></script>
 
     <?php include('script.php'); ?>
+    <script src="popup.js"></script>
 </body>
 
 </html>

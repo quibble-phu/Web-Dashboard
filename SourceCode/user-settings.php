@@ -15,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
     <?php include('head.php'); ?>
     <link href="style.css" rel="stylesheet">
     <link href="colormode.css" rel="stylesheet">
-   
+
 </head>
 
 <body>
@@ -90,7 +90,7 @@ if (!isset($_SESSION['user_id'])) {
 
 
     <script src="main.js"></script>
-
+    <script src="popup.js"></script>
     <?php include('script.php'); ?>
 </body>
 

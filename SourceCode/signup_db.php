@@ -2,6 +2,7 @@
     session_start();
     require 'condb.php';
     $minlenght = 6;
+    $role ="user";
 
     if (isset($_POST['register'])) {
         $username = $_POST['username'];
@@ -50,8 +51,8 @@
             $hashedPassword = password_hash($password,PASSWORD_DEFAULT);
 
             try{
-                $stmt =$pdo->prepare("INSERT INTO users(username,email,password) VALUES(?,?,?)");
-                $stmt->execute([$username,$email,$hashedPassword]);
+                $stmt =$pdo->prepare("INSERT INTO users(username,email,password,role) VALUES(?,?,?,?)");
+                $stmt->execute([$username,$email,$hashedPassword,$role]);
                 $_SESSION['success'] = "Registration Successfully";
                 header("location: login-signup.php?action=signup");
 

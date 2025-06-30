@@ -16,11 +16,11 @@ function logoutConfirm() {
     }
 
 document.getElementById('logoutBtn').addEventListener('click', function (e) {
-    e.preventDefault();   // ยกเลิกการไปหน้า logout ทันที
+    e.preventDefault();   
 
     Swal.fire({
       title: 'Are you sure?',
-      text: "Do you really want to logout?",
+      text: "You will be logged out",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -29,8 +29,8 @@ document.getElementById('logoutBtn').addEventListener('click', function (e) {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        // ถ้ากดยืนยัน ให้ไปหน้า logout.php
         window.location.href = 'logout.php';
       }
     });
   });
+
