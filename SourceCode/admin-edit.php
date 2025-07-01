@@ -2,10 +2,24 @@
 session_start();
 require "condb.php";
 
+if (isset($_SESSION['user_id'])) {
+    $session_id = session_id();
+    $user_id = $_SESSION['user_id'];
+    $now = date('Y-m-d H:i:s');
+
+    $stmt = $pdo->prepare("
+    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
+");
+    $stmt->execute([$user_id, $session_id, $now, $now]);
+}
+
 if (!isset($_SESSION['user_id'])) {
     header("location: login-signup.php");
     exit;
 }
+
 
 // ดึงข้อมูลผู้ใช้ที่ login อยู่
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -36,7 +50,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
     <div id="content">
         <?php include('navbar-main.php'); ?>
 
-        
+
 
 
 
@@ -111,7 +125,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
             $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?");
             $stmt->execute([$newUsername, $newEmail, $newRole, $id]);
-            
+
             echo "<script>
                 Swal.fire({
                 icon: 'success',
@@ -153,8 +167,8 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                         <?php endif; ?>
                     </select>
                 </div>
-                <button type="submit" name="update" id="confirm" style="display:none;" ></button>            
-                <button type="button"  class="btn btn-success" onclick="confirmUpdate()" >Save</button>
+                <button type="submit" name="update" id="confirm" style="display:none;"></button>
+                <button type="button" class="btn btn-success" onclick="confirmUpdate()">Save</button>
                 <a href="admin-panel.php" class="btn btn-danger">Cancel</a>
             </form>
         </div>

@@ -2,6 +2,19 @@
 session_start();
 require "condb.php";
 
+if (isset($_SESSION['user_id'])) {
+    $session_id = session_id();
+    $user_id = $_SESSION['user_id'];
+    $now = date('Y-m-d H:i:s');
+
+    $stmt = $pdo->prepare("
+    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
+    ");
+    $stmt->execute([$user_id, $session_id, $now, $now]);
+}
+
 if (!isset($_SESSION['user_id'])) {
     header("location: login-signup.php?action=login");
 }
@@ -72,9 +85,8 @@ if (!isset($_SESSION['user_id'])) {
 
         .lengthMenu {
             margin-right: 10px;
-           
+
         }
-       
     </style>
 
 </head>
@@ -89,21 +101,25 @@ if (!isset($_SESSION['user_id'])) {
             <!-- ฟอร์มกรองวันที่ -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="display-6 fw-bold lh-1 text-body-emphasis" style="color: white !important;"><i class="bi bi-table fs-1"></i> Select a date to show</h3>
+                    <h3 class="fw-bold lh-1 text-body-emphasis" style="color: white !important;"><i class="bi bi-table fs-3"></i> Select a date to show</h3>
                 </div>
                 <div class="card-body">
                     <form method="GET" class="row g-3">
                         <div class="col-md-4">
-                            <label for="date_from" class="form-label"><h4><strong>From :</strong></h4></label>
+                            <label for="date_from" class="form-label">
+                                <h4><strong>From :</strong></h4>
+                            </label>
                             <input type="date" id="date_from" name="date_from" class="form-control" required value="<?= $_GET['date_from'] ?? '' ?>">
                         </div>
                         <div class="col-md-4">
-                            <label for="date_to" class="form-label"><h4><strong>To :</strong></h4></label>
+                            <label for="date_to" class="form-label">
+                                <h4><strong>To :</strong></h4>
+                            </label>
                             <input type="date" id="date_to" name="date_to" class="form-control" required value="<?= $_GET['date_to'] ?? '' ?>">
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
                             <button type="submit" class="btn btn-success w-100">
-                               <h6 > <i class="bi bi-database-fill-up " ></i> <strong>Query</strong></h6>
+                                <h6> <i class="bi bi-database-fill-up "></i> <strong>Query</strong></h6>
                             </button>
                         </div>
                     </form>

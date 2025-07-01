@@ -1,3 +1,23 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require 'condb.php';
+
+if (isset($_SESSION['user_id'])) {
+    $session_id = session_id();
+    $user_id = $_SESSION['user_id'];
+    $now = date('Y-m-d H:i:s');
+
+    $stmt = $pdo->prepare("
+    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
+    ");
+    $stmt->execute([$user_id, $session_id, $now, $now]);
+}
+?>
+
 <header class="p-3 text-bg-dark">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -6,8 +26,8 @@
                 <span class="fs-4 fw-bold" style="color: #ffc100">PM UNIT |</span>
             </a>
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="index.php" class="nav-link px-2 text-secondary">Home</a></li>
-                <li><a href="main.php" class="nav-link px-2 text-white">Features</a></li>
+                <li><a href="index.php" class="nav-link px-2 text-white">Home</a></li>
+                <li><a href="main.php" class="nav-link px-2 text-warning">Features</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">Dashboard</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">Contact</a></li>
@@ -51,7 +71,7 @@
                     <span class="navbar-brand mb-0 h1 me-4">Welcome | <?php echo $userdata['username'] ?></span>
                     <button class="btn btn-danger" onclick="logoutConfirm()">Logout</button>
                 <?php } ?>
-                
+
 
 
             </div>

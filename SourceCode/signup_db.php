@@ -1,6 +1,20 @@
 <?php   
     session_start();
     require 'condb.php';
+
+    if (isset($_SESSION['user_id'])) {
+    $session_id = session_id();
+    $user_id = $_SESSION['user_id'];
+    $now = date('Y-m-d H:i:s');
+
+    $stmt = $pdo->prepare("
+        INSERT INTO user_sessions(session_id, user_id, last_activity)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
+    ");
+    $stmt->execute([$session_id, $user_id, $now]);
+}
+
     $minlenght = 6;
     $role ="user";
 
@@ -42,7 +56,7 @@
             header("location: login-signup.php?action=signup");
 
         }
-        else if ($useremailexistsxists){
+        else if ($useremailexists){
             $_SESSION['error'] = "Email already exists";
             header("location: login-signup.php?action=signup");
 

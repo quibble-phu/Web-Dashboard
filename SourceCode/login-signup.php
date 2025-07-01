@@ -1,6 +1,19 @@
 <?php 
     session_start();
 
+    if (isset($_SESSION['user_id'])) {
+    $session_id = session_id();
+    $user_id = $_SESSION['user_id'];
+    $now = date('Y-m-d H:i:s');
+
+     $stmt = $pdo->prepare("
+    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
+    ");
+    $stmt->execute([$user_id, $session_id, $now, $now]);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

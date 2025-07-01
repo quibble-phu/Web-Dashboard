@@ -1,3 +1,24 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require 'condb.php';
+
+if (isset($_SESSION['user_id'])) {
+    $session_id = session_id();
+    $user_id = $_SESSION['user_id'];
+    $now = date('Y-m-d H:i:s');
+
+     $stmt = $pdo->prepare("
+    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
+    ");
+    $stmt->execute([$user_id, $session_id, $now, $now]);
+}
+?>
+
+
 <nav class="navbar navbar-light bg-light border-bottom" id="top-navbar">
     <div class="d-flex align-items-center gap-3">
         <button class="btn btn-outline-info" id="toggleSidebar">☰</button>
