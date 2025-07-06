@@ -1,36 +1,22 @@
+<?php include('../backend/track_session.php'); ?>
 <?php
-session_start();
-require "condb.php";
-
-if (isset($_SESSION['user_id'])) {
-    $session_id = session_id();
-    $user_id = $_SESSION['user_id'];
-    $now = date('Y-m-d H:i:s');
-
-    $stmt = $pdo->prepare("
-    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
-    ");
-    $stmt->execute([$user_id, $session_id, $now, $now]);
-}
 
 $showAlert = false;
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 } else {
-    header("location: login-signup.php");
+    header("location: ../pages/login.php");
 }
 try {
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM employee WHERE user_id = ?");
     $stmt->execute([$user_id]);
     $userdata = $stmt->fetch();
 } catch (PDOException $e) {
     echo "Registration Fail" . $e->getmessage();
 }
 if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
-    header("location: main.php");
+    header("location: ../pages/main.php");
     exit;
 }
 
@@ -41,9 +27,9 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
 <head>
 
-    <?php include('head.php'); ?>
-    <link href="style.css" rel="stylesheet">
-    <link href="colormode.css" rel="stylesheet">
+    <?php include('../index/head.php'); ?>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/colormode.css" rel="stylesheet">
     <style>
         .transition-arrow {
             transition: transform 0.3s ease;
@@ -58,14 +44,14 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
 <body>
     <!-- Sidebar -->
-    <?php include('menu.php'); ?>
+    <?php include('../index/menu.php'); ?>
     <!-- Sidebar end-->
 
     <!-- Main Content -->
     <div id="content">
 
         <!-- navbar main -->
-        <?php include('navbar-main.php'); ?>
+        <?php include('../index/navbar-main.php'); ?>
         <!-- navbar main end -->
 
 
@@ -75,9 +61,9 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
         $threshold = date('Y-m-d H:i:s', strtotime('-5 minutes'));
 
         $stmt = $pdo->prepare("
-    SELECT users.username
+    SELECT employee.username
     FROM user_sessions
-    JOIN users ON users.id = user_sessions.user_id
+    JOIN employee ON employee.user_id = user_sessions.user_id
     WHERE user_sessions.last_activity >= ?
 ");
         $stmt->execute([$threshold]);
@@ -100,6 +86,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
 
         <button id="btnClearSessions" class="btn btn-warning ms-3 mt-3">Kill InActive Session</button>
+        <a href="../pages/signup.php" class="btn btn-info ms-3 mt-3">Add User</a>
 
 
 
@@ -116,6 +103,8 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                             <th>Username</th>
                             <th>Email</th>
                             <th>Hashed_Password</th>
+                            <th>Team</th>
+                            <th>Position</th>
                             <th>Role</th>
                             <th>Config</th>
                         </tr>
@@ -123,25 +112,27 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                     <tbody>
                         <?php
                         try {
-                            $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id ASC");
+                            $stmt = $pdo->prepare("SELECT * FROM employee ORDER BY user_id ASC");
                             $stmt->execute();
                             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                             foreach ($users as $user) {
-                                echo "<tr id='row-{$user['id']}'>";
-                                echo "<td>" . htmlspecialchars($user['id']) . "</td>";
+                                echo "<tr id='row-{$user['user_id']}'>";
+                                echo "<td>" . htmlspecialchars($user['user_id']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['username']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['email']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['password']) . "</td>";
+                                echo "<td>" . htmlspecialchars($user['team']) . "</td>";
+                                echo "<td>" . htmlspecialchars($user['position']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['role']) . "</td>";
                                 echo "<td>
-                                <a href='admin-edit.php?id={$user['id']}' class='btn btn-sm btn-warning'>Edit</a>
-                                <button class='btn btn-sm btn-danger' onclick='confirmDeleteAJAX({$user['id']})'>Delete</button>
+                                <a href='../pages/admin-edit.php?user_id={$user['user_id']}' class='btn btn-sm btn-warning'>Edit</a>
+                                <button class='btn btn-sm btn-danger' onclick='confirmDeleteAJAX({$user['user_id']})'>Delete</button>
                             </td>";
                                 echo "</tr>";
                             }
                         } catch (PDOException $e) {
-                            echo "<tr><td colspan='6'>เกิดข้อผิดพลาด: " . $e->getMessage() . "</td></tr>";
+                            echo "<tr><td colspan='9'>เกิดข้อผิดพลาด: " . $e->getMessage() . "</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -157,10 +148,10 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
         <!-- foooter -->
         <?php
-        include('footer.php');
+        include('../index/footer.php');
         ?>
 
-        <?php include('script.php'); ?>
+        <?php include('../index/script.php'); ?>
 
 
     </div>
@@ -169,7 +160,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
 
     <!-- on off menu -->
-    <script src="main.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         function confirmDeleteAJAX(userId) {
             Swal.fire({
@@ -184,7 +175,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // ส่งคำสั่งลบไปยัง PHP ด้วย fetch
-                    fetch('admin-delete.php', {
+                    fetch('../backend/admin-delete.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -220,7 +211,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch('cleanup_sessions.php')
+                    fetch('../backend/cleanup_sessions.php')
                         .then(async response => {
                             const text = await response.text();
                             if (response.ok) {

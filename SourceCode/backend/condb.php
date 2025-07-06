@@ -2,7 +2,8 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$dbname ="testdatabase";
+$dbname ="cmms_db";
+date_default_timezone_set('Asia/Bangkok');
 
 try {
   $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);

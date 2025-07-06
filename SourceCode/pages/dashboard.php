@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "condb.php";
+require "../backend/condb.php";
 
 if (isset($_SESSION['user_id'])) {
     $session_id = session_id();
@@ -16,7 +16,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    header("location: login-signup.php?action=login");
+    header("location: ../pages/login.php");
 }
 ?>
 
@@ -24,9 +24,9 @@ if (!isset($_SESSION['user_id'])) {
 <html lang="en">
 
 <head>
-    <?php include('head.php'); ?>
-    <link href="style.css" rel="stylesheet">
-    <link href="colormode.css" rel="stylesheet">
+    <?php include('../index/head.php'); ?>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/colormode.css" rel="stylesheet">
     <style>
         #myTable_wrapper .dt-buttons .btn {
             margin-right: 0em;
@@ -92,10 +92,10 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 
 <body>
-    <?php include('menu.php'); ?>
+    <?php include('../index/menu.php'); ?>
 
     <div id="content">
-        <?php include('navbar-main.php'); ?>
+        <?php include('../index/navbar-main.php'); ?>
 
         <div class="container-fluid p-4">
             <!-- ฟอร์มกรองวันที่ -->
@@ -181,13 +181,13 @@ if (!isset($_SESSION['user_id'])) {
                 ?>
             </div>
 
-            <?php include('footer.php'); ?>
+            <?php include('../index/footer.php'); ?>
         </div>
     </div>
 
-    <script src="main.js"></script>
-    <script src="popup.js"></script>
-    <?php include('script.php'); ?>
+    <script src="../js/main.js"></script>
+    <script src="../js/popup.js"></script>
+    <?php include('../index/script.php'); ?>
 </body>
 
 </html>

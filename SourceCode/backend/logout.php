@@ -1,6 +1,5 @@
+<?php include('../backend/track_session.php'); ?>
 <?php
-session_start();
-require 'condb.php';
 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -13,6 +12,6 @@ if (isset($_SESSION['user_id'])) {
     session_destroy();
 }
 
-header("Location: login-signup.php");
+header("Location: ../pages/login.php");
 exit;
 ?>

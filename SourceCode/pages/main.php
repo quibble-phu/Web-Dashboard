@@ -1,25 +1,8 @@
+<?php include('../backend/track_session.php'); ?>
 <?php
-session_start();
-require "condb.php";
-
-if (isset($_SESSION['user_id'])) {
-    $session_id = session_id();
-    $user_id = $_SESSION['user_id'];
-    $now = date('Y-m-d H:i:s');
-
-     $stmt = $pdo->prepare("
-    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
-    ");
-    $stmt->execute([$user_id, $session_id, $now, $now]);
-}
-
 if (!isset($_SESSION['user_id'])) {
-    header("location: login-signup.php?action=login");
+    header("location: ../pages/login.php");
 }
-
-
 ?>
 
 
@@ -27,27 +10,28 @@ if (!isset($_SESSION['user_id'])) {
 <html lang="en">
 
 <head>
-    <?php include('head.php'); ?>
-    <link href="style.css" rel="stylesheet">
-     <link href="colormode.css" rel="stylesheet">
+    <?php include('../index/head.php'); ?>
+    <link href="../css/style.css" rel="stylesheet">
+     <link href="../css/colormode.css" rel="stylesheet">
 </head>
 
 <body>
     <!-- Sidebar -->
-    <?php include('menu.php'); ?>
+    <?php include('../index/menu.php'); ?>
     <!-- Sidebar end-->
 
     <!-- Main Content -->
     <div id="content">
 
         <!-- navbar main -->
-        <?php include('navbar-main.php'); ?>
+        <?php include('../index/navbar-main.php'); ?>
         <!-- navbar main end -->
 
         <!-- content -->
         <div class="container-fluid p-4">
             <div class="container-fluid p-4">
-            <div class="container my-5">
+            <div class="container py-5">
+
                 <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-start rounded-3 border shadow-lg custom-dark-box">
 
 
@@ -60,7 +44,7 @@ if (!isset($_SESSION['user_id'])) {
 
                     </div>
                     <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
-                        <img src="Pic/hero.png" alt="Hero" class="img-fluid" width="720">
+                        <img src="../Pic/hero.png" alt="Hero" class="img-fluid" width="720">
                     </div>
                 </div>
             </div>
@@ -71,7 +55,7 @@ if (!isset($_SESSION['user_id'])) {
 
         <!-- foooter -->
         <?php
-        include('footer.php');
+        include('../index/footer.php');
         ?>
 
 
@@ -81,10 +65,10 @@ if (!isset($_SESSION['user_id'])) {
 
 
     <!-- on off menu -->
-    <script src="main.js"></script>
-
-    <?php include('script.php'); ?>
-    <script src="popup.js"></script>
+    <script src="../js/main.js"></script>
+    
+    <?php include('../index/script.php'); ?>
+    <script src="../js/popup.js"></script>
 </body>
 
 </html>

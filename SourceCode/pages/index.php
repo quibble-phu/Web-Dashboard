@@ -1,32 +1,17 @@
-<?php
-    session_start();
-    require "condb.php";
-    if (isset($_SESSION['user_id'])) {
-    $session_id = session_id();
-    $user_id = $_SESSION['user_id'];
-    $now = date('Y-m-d H:i:s');
-
-     $stmt = $pdo->prepare("
-    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
-    ");
-    $stmt->execute([$user_id, $session_id, $now, $now]);
-}
-    ?>
+<?php include('../backend/track_session.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <?php
-    include('head.php');
+    include('../index/head.php');
     ?>
 </head>
 
 <body>
 
     <!-- Header start -->
-    <?php include('navbar.php');?>
+    <?php include('../index/navbar.php');?>
     <!-- Header End -->
 
 
@@ -40,7 +25,7 @@
                 <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3"> <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">Primary</button> <button type="button" class="btn btn-outline-secondary btn-lg px-4">Default</button> </div>
             </div>
             <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
-                <img src="FB_IMG_1562665659934 (1).JPG" alt="Hero image" class="img-fluid" width="720">
+                <img src="../FB_IMG_1562665659934 (1).JPG" alt="Hero image" class="img-fluid" width="720">
             </div>
         </div>
 
@@ -134,13 +119,14 @@
 
     <!-- footer start -->
     <?php
-    include('footer.php');
+    include('../index/footer.php');
     ?>
     <!-- footer end -->
 
     <?php
-    include('script.php');
+    include('../index/script.php');
     ?>
+    
 </body>
 
 </html>

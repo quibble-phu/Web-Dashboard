@@ -1,16 +1,17 @@
 <!-- jQuery -->
-<script src="../plugins/jquery/jquery.min.js"></script>
+<script src="../../plugins/jquery/jquery.min.js"></script>
 <!-- adminlte -->
 
 
 
 <!-- Bootstrap 5 -->
-<script src="assets/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script src="../assets/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 <!-- DataTables -->
-<script src="../plugins/datatables-new/datatables.min.js"></script>
+<script src="../../plugins/datatables-new/datatables.min.js"></script>
 
-<script src="../plugins/sweetalert2.all.min.js"></script>
-<script src="logout.js"></script>
+<script src="../../plugins/sweetalert2.all.min.js"></script>
+
+
 
 
 

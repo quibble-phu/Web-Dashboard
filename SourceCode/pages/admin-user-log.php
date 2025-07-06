@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'condb.php';
+require '../backend/condb.php';
 
 if (isset($_SESSION['user_id'])) {
     $session_id = session_id();
@@ -17,7 +17,7 @@ if (isset($_SESSION['user_id'])) {
 
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login-signup.php');
+    header('Location: ../pages/login.php');
     exit;
 }
 
@@ -49,9 +49,9 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <head>
 
-    <?php include('head.php'); ?>
-    <link href="style.css" rel="stylesheet">
-    <link href="colormode.css" rel="stylesheet">
+    <?php include('../index/head.php'); ?>
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/colormode.css" rel="stylesheet">
     <style>
 
     </style>
@@ -60,14 +60,14 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <!-- Sidebar -->
-    <?php include('menu.php'); ?>
+    <?php include('../index/menu.php'); ?>
     <!-- Sidebar end-->
 
     <!-- Main Content -->
     <div id="content">
 
         <!-- navbar main -->
-        <?php include('navbar-main.php'); ?>
+        <?php include('../index/navbar-main.php'); ?>
         <!-- navbar main end -->
 
 
@@ -158,11 +158,9 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- content end -->
 
     <!-- foooter -->
-    <?php
-    include('footer.php');
-    ?>
+    <?php include('../index/footer.php');?>
 
-    <?php include('script.php'); ?>
+    <?php include('../index/script.php'); ?>
 
 
     </div>
@@ -171,7 +169,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     <!-- on off menu -->
-    <script src="main.js"></script>
+    <script src="../js/main.js"></script>
     <script>
         document.getElementById('btnClearSessions').addEventListener('click', function() {
             Swal.fire({
@@ -185,7 +183,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch('cleanup_sessions.php')
+                    fetch('../backend/cleanup_sessions.php')
                         .then(async response => {
                             const text = await response.text();
                             if (response.ok) {
@@ -213,7 +211,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch('delete_session.php', {
+                    fetch('../backend/delete_session.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'

@@ -14,7 +14,7 @@ CREATE TABLE user_sessions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-#1user many session
+
 CREATE TABLE user_sessions (
     user_id INT,
     session_id VARCHAR(255),
