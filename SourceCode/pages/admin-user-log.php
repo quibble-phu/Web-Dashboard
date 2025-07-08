@@ -1,20 +1,7 @@
+<?php include('../backend/track_session.php'); ?>
 <?php
-session_start();
-require '../backend/condb.php';
 
-if (isset($_SESSION['user_id'])) {
-    $session_id = session_id();
-    $user_id = $_SESSION['user_id'];
-    $now = date('Y-m-d H:i:s');
-
-    $stmt = $pdo->prepare("
-    INSERT INTO user_sessions(user_id, session_id, last_activity, created_at)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE last_activity = VALUES(last_activity)
-    ");
-    $stmt->execute([$user_id, $session_id, $now, $now]);
-}
-
+require_once '../backend/condb.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../pages/login.php');
@@ -22,22 +9,24 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT * FROM employee WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $currentUser = $stmt->fetch();
 
 if (!in_array($currentUser['role'], ['admin', 'co-admin'])) {
-    echo "Permission denied.";
+    header('Location: ../pages/main.php');
+
     exit;
 }
 
 // ดึง sessions ทั้งหมด
 $stmt = $pdo->prepare("
-    SELECT us.session_id, us.user_id, us.last_activity, us.created_at, u.username, u.role
+    SELECT us.session_id, us.user_id, us.last_activity, us.created_at, us.ip_address, us.user_agent, u.username, u.role
     FROM user_sessions us
-    JOIN users u ON u.id = us.user_id
+    JOIN employee u ON u.user_id = us.user_id
     ORDER BY us.last_activity DESC
 ");
+
 $stmt->execute();
 $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -77,21 +66,14 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $threshold = date('Y-m-d H:i:s', strtotime('-5 minutes'));
 
         $stmt = $pdo->prepare("
-            SELECT users.username
+            SELECT employee.username
             FROM user_sessions
-            JOIN users ON users.id = user_sessions.user_id
+            JOIN employee ON employee.user_id = user_sessions.user_id
             WHERE user_sessions.last_activity >= ?
         ");
         $stmt->execute([$threshold]);
         $online_users = $stmt->fetchAll();
-        $stmt = $pdo->prepare("
-            SELECT us.session_id, us.user_id, us.last_activity, us.created_at, u.username, u.role
-            FROM user_sessions us
-            JOIN users u ON us.user_id = u.id
-            ORDER BY us.last_activity DESC
-        ");
-        $stmt->execute();
-        $sessions = $stmt->fetchAll();
+        
 
         ?>
 
@@ -100,6 +82,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <i class="bi bi-broadcast-pin fs-4"></i><span class="fs-4 ms-1"><strong>Online Users</strong></span>
             </div>
             <div class="card-body">
+                <p class="text-muted">จำนวนผู้ใช้ออนไลน์: <?= count($online_users) ?> คน</p>
                 <?php foreach ($online_users as $user): ?>
                     <span class="badge bg-primary me-1 "><?= htmlspecialchars($user['username']) ?></span>
                 <?php endforeach; ?>
@@ -124,10 +107,14 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th>User</th>
                             <th>Role</th>
                             <th>Session ID</th>
+                            <th>IP Address</th>
+                            <th>User Agent</th>
                             <th>Created At</th>
                             <th>Last Active</th>
                             <th>Action</th>
                         </tr>
+                    </thead>
+
                     </thead>
                     <tbody>
                         <?php foreach ($sessions as $session): ?>
@@ -135,16 +122,23 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= htmlspecialchars($session['username']) ?></td>
                                 <td><?= htmlspecialchars($session['role']) ?></td>
                                 <td><?= htmlspecialchars($session['session_id']) ?></td>
+                                <td><?= htmlspecialchars($session['ip_address']) ?></td>
+                                <td style="max-width: 200px; overflow: auto; font-size: 12px;">
+                                    <?= htmlspecialchars($session['user_agent']) ?>
+                                </td>
                                 <td><?= htmlspecialchars($session['created_at']) ?></td>
                                 <td><?= htmlspecialchars($session['last_activity']) ?></td>
                                 <td>
-                                    <button class="btn btn-sm btn-danger" onclick="killSession('<?= $session['session_id'] ?>')">
-                                        Kill
-                                    </button>
+                                    <?php if ($session['session_id'] !== session_id()): ?>
+                                        <button class="btn btn-sm btn-danger" onclick="killSession('<?= $session['session_id'] ?>')">Kill</button>
+                                    <?php else: ?>
+                                        <span class="text-muted">Your Session</span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -158,7 +152,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- content end -->
 
     <!-- foooter -->
-    <?php include('../index/footer.php');?>
+    <?php include('../index/footer.php'); ?>
 
     <?php include('../index/script.php'); ?>
 

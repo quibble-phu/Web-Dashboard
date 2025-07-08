@@ -2,6 +2,15 @@
 session_start();
 require_once('../backend/condb.php');
 
+$stmt = $pdo->prepare("SELECT * FROM employee WHERE user_id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$userdata = $stmt->fetch();
+
+if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
+    header("location: ../pages/main.php");
+    exit;
+}
+
 $minlength = 6;
 
 if (isset($_POST['register'])) {

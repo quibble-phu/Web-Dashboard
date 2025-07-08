@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+
+
+
+
+
     const togglePassword = document.getElementById("togglePassword");
     if (togglePassword) {
         togglePassword.addEventListener("click", function () {
@@ -12,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
             eyeIcon.classList.toggle("bi-eye-slash");
         });
     }
+
+
 
     const toggleOldPassword = document.getElementById("toggleOldPassword");
     if (toggleOldPassword) {

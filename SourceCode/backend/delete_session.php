@@ -1,6 +1,7 @@
+<?php include('../backend/track_session.php'); ?>
 <?php
-session_start();
-require 'condb.php';
+
+require_once 'condb.php';
 
 header('Content-Type: application/json');
 
@@ -10,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // ตรวจสอบว่าเป็น admin หรือ co-admin
-$stmt = $pdo->prepare("SELECT role FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT role FROM employee WHERE user_id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 

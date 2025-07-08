@@ -40,6 +40,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
         }
     </style>
 
+
 </head>
 
 <body>
@@ -75,6 +76,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                 <i class="bi bi-broadcast-pin fs-4"></i><span class="fs-4 ms-1"><strong>Online Users</strong></span>
             </div>
             <div class="card-body">
+                <p class="text-muted">จำนวนผู้ใช้ออนไลน์: <?= count($online_users) ?> คน</p>
                 <?php foreach ($online_users as $user): ?>
                     <span class="badge bg-primary me-1"><?= htmlspecialchars($user['username']) ?></span>
                 <?php endforeach; ?>
@@ -102,7 +104,8 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                             <th>#id</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Hashed_Password</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
                             <th>Team</th>
                             <th>Position</th>
                             <th>Role</th>
@@ -121,13 +124,18 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                                 echo "<td>" . htmlspecialchars($user['user_id']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['username']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($user['password']) . "</td>";
+                                echo "<td>" . htmlspecialchars($user['first_name']) . "</td>";
+                                echo "<td>" . htmlspecialchars($user['last_name']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['team']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['position']) . "</td>";
                                 echo "<td>" . htmlspecialchars($user['role']) . "</td>";
                                 echo "<td>
-                                <a href='../pages/admin-edit.php?user_id={$user['user_id']}' class='btn btn-sm btn-warning'>Edit</a>
-                                <button class='btn btn-sm btn-danger' onclick='confirmDeleteAJAX({$user['user_id']})'>Delete</button>
+                                <a href='../pages/admin-edit.php?user_id={$user['user_id']}' class='btn btn-sm btn-warning'>
+                                 <i class='bi bi-pencil-fill'></i>
+                                </a>
+                                <button class='btn btn-sm btn-danger' onclick='confirmDeleteAJAX({$user['user_id']})'>
+                                <i class='bi bi-trash-fill'></i>
+                                </button>
                             </td>";
                                 echo "</tr>";
                             }
