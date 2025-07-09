@@ -100,7 +100,7 @@ CREATE TABLE history (
         REFERENCES work(work_id) ON DELETE CASCADE
 );
 
--- 🔑 OTP / Password Reset
+-- 🔑 Password Reset
 CREATE TABLE password_resets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,

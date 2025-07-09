@@ -116,11 +116,19 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
             } else if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = "รูปแบบ Email ไม่ถูกต้อง";
             }
-            if (empty($newPassword)) {
-                $errors[] = "กรุณากรอกรหัสผ่าน";
-            } else if (strlen($newPassword) < $minlength) {
-                $errors[] = "Password ต้องมีอย่างน้อย $minlength ตัวอักษร";
+            // check pass
+            if (!empty($newPassword)) {
+
+                if (strlen($newPassword) < $minlength) {
+                    $errors[] = "Password ต้องมีอย่างน้อย $minlength ตัวอักษร";
+                } else {
+                    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                }
+            } else {
+                // ใช้ password เดิมจากฐานข้อมูล
+                $hashedPassword = $user_to_edit['password'];
             }
+
             if (empty($newFirstname)) {
                 $errors[] = "กรุณากรอก First Name";
             }
@@ -202,8 +210,8 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                     <div class="mb-3 col-12 col-md-6">
                         <label class="form-label">Password</label>
                         <div class="input-group">
-                            <input type="password" id="password" name="password" class="form-control" placeholder="min 6 Character"
-                                autocomplete="off" value="<?= htmlspecialchars($user_to_edit['password']) ?>">
+                            <input type="password" id="password" name="password" class="form-control" placeholder="ใส่รหัสใหม่ (ถ้าต้องการเปลี่ยน) min 6 Character"
+                                autocomplete="off">
                             <button class="btn" type="button" id="adminedit"
                                 style="position: absolute; top: calc(50% - 11px); right: 10px; border: none; background: transparent; padding: 0; cursor: pointer; height: 24px; width: 24px; display: flex; align-items: center; justify-content: center;">
                                 <i class="bi bi-eye-slash" id="eyeIcon1"></i>
@@ -252,7 +260,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
                             <option value="engineer" <?= $user_to_edit['role'] === 'engineer' ? 'selected' : '' ?>>Engineer</option>
                             <option value="co-admin" <?= $user_to_edit['role'] === 'co-admin' ? 'selected' : '' ?>>Co-Admin</option>
                             <?php if ($userdata['role'] === 'admin'): ?>
-                                <option value="admin" <?= $user_to_edit['role'] === 'admin' ? '-selected' : '' ?>>Admin</option>
+                                <option value="admin" <?= $user_to_edit['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
                             <?php endif; ?>
 
                         </select>

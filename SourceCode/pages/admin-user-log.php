@@ -73,7 +73,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         ");
         $stmt->execute([$threshold]);
         $online_users = $stmt->fetchAll();
-        
+
 
         ?>
 
@@ -98,7 +98,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="card mt-4 ms-3 me-3">
             <div class="card-header bg-info text-white ">
-                <i class="bi bi-broadcast-pin fs-4"></i><span class="fs-4 ms-1"><strong>🧾 Active Sessions</strong></span>
+                <span class="fs-4 ms-1"><strong>🧾 Active Sessions</strong></span>
             </div>
             <div class="card-body table-responsive">
                 <table class="table table-bordered table-striped" id="myTable">
@@ -182,6 +182,7 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             const text = await response.text();
                             if (response.ok) {
                                 Swal.fire('สำเร็จ', text, 'success');
+                                refreshSessionTable(); //  reload ตารางหลังจากกด OK
                             } else {
                                 Swal.fire('ผิดพลาด', text, 'error');
                             }
@@ -226,6 +227,16 @@ $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
     </script>
+    <script>
+        function refreshSessionTable() {
+            fetch('../backend/get_sessions.php')
+                .then(res => res.text())
+                .then(html => {
+                    document.querySelector('#myTable tbody').innerHTML = html;
+                });
+        }
+    </script>
+
 
 
 
