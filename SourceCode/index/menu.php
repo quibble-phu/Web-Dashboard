@@ -13,7 +13,7 @@
 
     <div class="sidebar-nav flex-grow-1 d-flex flex-column">
         <a href="../pages/dashboard.php"><i class="bi bi-graph-up-arrow fs-4"></i> <span class="sidebar-text">Dashboard</span></a>
-         <a href="../pages/main.php"><i class="bi bi-diagram-3 fs-4"></i> <span class="sidebar-text">Welcome</span></a>
+         <a href="../pages/main.php"><i class="bi bi-diagram-3 fs-4"></i> <span class="sidebar-text"> Maintenance Plan</span></a>
         <a href="#"><i class="fas fa-exclamation-triangle fs-4"></i> <span class="sidebar-text">Work Issue</span></a>
 
         <!-- Admin Panel -->

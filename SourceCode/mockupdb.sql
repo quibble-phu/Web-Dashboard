@@ -33,17 +33,17 @@ INSERT INTO part (part_id, name, model, brand, cost, supplier) VALUES
 ('P024', 'Wire', 'CW-15', 'AAA', 20, 'XYZ Supply'); 
 
 INSERT INTO maintenance_job (maintenance_id, machine_id, description, man_hour, period, inhouse_outsource, maker) VALUES
-('MN001', 'MC001', 'Check air pressure', 2, 'Monthly', 'inhouse', 'Somchai'),
-('MN002', 'MC001', 'Change filter', 1, 'Weekly', 'inhouse', 'Somchai'),
-('MN003', 'MC002', 'Inspect pump shaft', 3, 'Quarterly', 'outsource', 'ExternalCo'),
-('MN004', 'MC003', 'Check air pressure', 2, 'Monthly', 'inhouse', 'Preecha'),
-('MN005', 'MC003', 'Check air pressure', 2, 'Monthly', 'inhouse', 'Somchai'),
-('MN006', 'MC004', 'Change filter', 1, 'Weekly', 'inhouse', 'Preecha'),
-('MN007', 'MC004', 'Inspect pump shaft', 3, 'Quarterly', 'outsource', 'ExternalCo'),
-('MN008', 'MC004', 'Inspect pump shaft', 3, 'Quarterly', 'outsource', 'ExternalCo'),
-('MN009', 'MC005', 'Change filter', 1, 'Weekly', 'inhouse', 'Somchai'),
-('MN010', 'MC006', 'Inspect pump shaft', 3, 'Quarterly', 'outsource', 'ExternalCo'),
-('MN011', 'MC006', 'Inspect pump shaft', 3, 'Quarterly', 'outsource', 'ExternalCo');
+('MN001', 'MC001', 'Check air pressure', 2, '1M', 'inhouse', 'Somchai'),
+('MN002', 'MC001', 'Change filter', 1, '7D', 'inhouse', 'Somchai'),
+('MN003', 'MC002', 'Inspect pump shaft', 3, '3M', 'outsource', 'ExternalCo'),
+('MN004', 'MC003', 'Check air pressure', 2, '1M', 'inhouse', 'Preecha'),
+('MN005', 'MC003', 'Check air pressure', 2, '1M', 'inhouse', 'Somchai'),
+('MN006', 'MC004', 'Change filter', 1, '7D', 'inhouse', 'Preecha'),
+('MN007', 'MC004', 'Inspect pump shaft', 3, '3M', 'outsource', 'ExternalCo'),
+('MN008', 'MC004', 'Inspect pump shaft', 3, '3M', 'outsource', 'ExternalCo'),
+('MN009', 'MC005', 'Change filter', 1, '7D', 'inhouse', 'Somchai'),
+('MN010', 'MC006', 'Inspect pump shaft', 3, '3M', 'outsource', 'ExternalCo'),
+('MN011', 'MC006', 'Inspect pump shaft', 3, '3M', 'outsource', 'ExternalCo');
 
 INSERT INTO mn_part (maintenance_id, part_id, amount) VALUES
 ('MN001', 'P001', 2),
@@ -87,4 +87,5 @@ INSERT INTO mn_part (maintenance_id, part_id, amount) VALUES
 INSERT INTO work (work_id, maintenance_id, user_id, assign_date, start_date, end_date) VALUES
 ('W001', 'MN001', 5, '2025-07-01', '2025-07-03', NULL),
 ('W002', 'MN002', 5, '2025-07-02', NULL, NULL),
-('W003', 'MN003', 5, NULL, NULL, NULL);
+('W003', 'MN003', 5, NULL, NULL, NULL),
+('W004', 'MN004', 5, '2025-07-01', '2025-07-03', '2025-07-14');
