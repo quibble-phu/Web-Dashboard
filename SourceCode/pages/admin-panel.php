@@ -16,7 +16,7 @@ try {
     echo "Registration Fail" . $e->getmessage();
 }
 if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
-    header("location: ../pages/main.php");
+    header("location: ../pages/dashboard.php");
     exit;
 }
 

@@ -45,7 +45,7 @@ if (isset($_POST['login'])) {
                 ");
                 $stmt2->execute([$userdata['user_id'], $session_id, $ip, $user_agent, $now, $now]);
 
-                header("Location: ../pages/main.php");
+                header("Location: ../pages/dashboard.php");
                 exit;
             } else {
                 $_SESSION['error2'] = "Invalid username or password";

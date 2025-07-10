@@ -10,6 +10,8 @@
 <script src="../../plugins/datatables-new/datatables.min.js"></script>
 
 <script src="../../plugins/sweetalert2.all.min.js"></script>
+<script src="../../plugins/fullcalendar-6.1.18/package/index.global.min.js"></script>
+
 
 
 

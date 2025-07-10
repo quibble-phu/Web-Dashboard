@@ -14,7 +14,7 @@ $stmt->execute([$user_id]);
 $currentUser = $stmt->fetch();
 
 if (!in_array($currentUser['role'], ['admin', 'co-admin'])) {
-    header('Location: ../pages/main.php');
+    header('Location: ../pages/dashboard.php');
 
     exit;
 }

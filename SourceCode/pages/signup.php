@@ -13,7 +13,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $userdata = $stmt->fetch();
 
 if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
-    header("location: ../pages/main.php");
+    header("location: ../pages/dashboard.php");
     exit;
 }
 ?>

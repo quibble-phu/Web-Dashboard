@@ -13,7 +13,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $userdata = $stmt->fetch();
 
 if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
-    header("location: ../pages/main.php");
+    header("location: ../pages/dashboard.php");
     exit;
 }
 
@@ -204,7 +204,7 @@ if (!in_array($userdata['role'], ['admin', 'co-admin'])) {
 
                     <div class="mb-3 col-12 col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user_to_edit['email']) ?>" placeholder="example@gmail.com">
+                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user_to_edit['email']) ?>" placeholder="Hino@example.com">
                     </div>
 
                     <div class="mb-3 col-12 col-md-6">

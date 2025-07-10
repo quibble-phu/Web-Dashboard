@@ -1,7 +1,7 @@
 <?php include('../backend/track_session.php'); ?>
 <?php
 if (isset($_SESSION['user_id'])) {
-    header("location: ../pages/main.php");
+    header("location: ../pages/dashboard.php");
 }
 ?>
 <!DOCTYPE html>
