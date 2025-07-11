@@ -19,14 +19,20 @@ if (!$start || !$end) {
 $startDateFilter = new DateTime($start);
 $endDateFilter = new DateTime($end);
 
-// ดึงข้อมูล maintenance_job + รอบล่าสุดจาก work
-$sql = "SELECT mj.maintenance_id, mj.description, mj.period, mj.inhouse_outsource, w.end_date 
+// ดึงข้อมูล maintenance_job + รอบล่าสุดจาก work (พร้อม assign_date ล่าสุด)
+$sql = "SELECT mj.maintenance_id, mj.description, mj.period, mj.inhouse_outsource, 
+               w.end_date, w2.assign_date
         FROM maintenance_job mj
         LEFT JOIN (
             SELECT maintenance_id, MAX(end_date) AS end_date
             FROM work
             GROUP BY maintenance_id
-        ) w ON mj.maintenance_id = w.maintenance_id";
+        ) w ON mj.maintenance_id = w.maintenance_id
+        LEFT JOIN (
+            SELECT maintenance_id, MIN(assign_date) AS assign_date
+            FROM work
+            GROUP BY maintenance_id
+        ) w2 ON mj.maintenance_id = w2.maintenance_id";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
@@ -36,8 +42,9 @@ $events = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $maintenanceId = $row['maintenance_id'];
     $description = $row['description'];
-    $periodStr = $row['period']; // เช่น '1M', '7D'
+    $periodStr = $row['period'];
     $lastEndDateStr = $row['end_date'];
+    $assignDateStr = $row['assign_date'];
     $source = $row['inhouse_outsource'];
 
     // แปลง period เป็น DateInterval
@@ -57,49 +64,65 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 break;
             default:
                 $period = new DateInterval("P1M");
-                break;
         }
     } else {
         $period = new DateInterval("P1M");
     }
 
-    // เริ่มจาก end_date ล่าสุด หรือจากช่วง filter
-    $nextStartDate = $lastEndDateStr ? new DateTime($lastEndDateStr) : clone $startDateFilter;
-    if ($lastEndDateStr) $nextStartDate->modify('+1 day');
+    // ---------- เงื่อนไข 1: มี end_date ⇒ วนรอบถัดไป ----------
+    if ($lastEndDateStr) {
+        $nextStartDate = new DateTime($lastEndDateStr);
+        $nextStartDate->modify('+1 day');
 
-    // วนสร้างรอบใหม่จนเกิน endDateFilter (ล่วงหน้า 3 รอบพอ)
-    $round = 0;
-    while ($round < 3) {
-        $nextEndDate = clone $nextStartDate;
-        $nextEndDate->add($period);
-        $nextEndDate->modify('-1 day');
+        $round = 0;
+        while ($round < 3) {
+            $nextEndDate = clone $nextStartDate;
+            $nextEndDate->add($period);
+            $nextEndDate->modify('-1 day');
 
-        // ถ้าเลยช่วงที่เราจะแสดง ก็หยุด
-        if ($nextStartDate > $endDateFilter) break;
+            if ($nextStartDate > $endDateFilter) break;
 
-        // แสดงเฉพาะรอบที่อยู่ในช่วง filter
-        if ($nextEndDate >= $startDateFilter) {
-            $color = $source === 'inhouse' ? '#10b981' : '#f97316'; 
+            if ($nextEndDate >= $startDateFilter) {
+                $color = $source === 'inhouse' ? '#10b981' : '#f97316';
+                $result = $source === 'inhouse' ? '🟢 inhouse' : '🔴 outsource';
+                $events[] = [
+                    'id' => $maintenanceId,
+                    'title' => $description,
+                    'result' => $result,
+                    'start' => $nextStartDate->format('Y-m-d'),
+                    'end' => $nextStartDate->format('Y-m-d'),
+                    'event_start' => $nextStartDate->format('Y-m-d'),
+
+                    'allDay' => true,
+                    'color' => $color
+                ];
+            }
+
+
+            $nextStartDate = clone $nextEndDate;
+            $nextStartDate->modify('+1 day');
+            $round++;
+        }
+    }
+
+    // ---------- เงื่อนไข 2: ไม่มี end_date แต่มี assign_date ----------
+    elseif ($assignDateStr) {
+        $assignDate = new DateTime($assignDateStr);
+        if ($assignDate >= $startDateFilter && $assignDate <= $endDateFilter) {
+            $color = $source === 'inhouse' ? '#10b981' : '#f97316';
+            $result = $source === 'inhouse' ? '🟢 inhouse' : '🔴 outsource';
             $events[] = [
                 'id' => $maintenanceId,
-                'title' => $description,
-                //'start' => $nextStartDate->format('Y-m-d'),
-                //'end' => $nextEndDate->format('Y-m-d'),
-                'start' => $nextStartDate->format('Y-m-d'),
-                'end' => $nextStartDate->format('Y-m-d'), 
-
+                'title' => $description . ' (เริ่มรอบแรก)',
+                'result' => $result,
+                'start' => $assignDate->format('Y-m-d'),
+                'end' => $assignDate->format('Y-m-d'),
+               
                 'allDay' => true,
                 'color' => $color
             ];
         }
-
-        // เตรียมรอบถัดไป
-        $nextStartDate = clone $nextEndDate;
-        $nextStartDate->modify('+1 day');
-        $round++;
     }
 }
-
 header('Content-Type: application/json');
 echo json_encode($events);
-?>

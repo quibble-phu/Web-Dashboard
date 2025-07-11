@@ -38,10 +38,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if ($status === 'done' && !$isDone) continue;
 
     $color = $isDone ? '#10b981' : ($isInProgress ? '#3b82f6' : '#facc15');
+    $result = $isDone ? '✅ Sucess' : ($isInProgress ? '🔵 In-progess' : '🟡 Pending');
 
+   
     $events[] = [
         'id' => $row['maintenance_id'],
         'title' => $row['description'],
+        'result'=> $result,
         //'start' => $row['start_date'] ?: $row['assign_date'],
         'start' => $row['assign_date'],
         'end' => $row['assign_date'],

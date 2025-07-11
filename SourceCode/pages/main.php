@@ -153,14 +153,13 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <!-- ตารางทั้งหมด (งาน in-house และ outsource) -->
-        <div id="tableView" class="view-container active">
-            <?php include('plan-table.php'); ?>
+        <div id="tableView" class="view-container">
+            <?php include('../backend/maintenance_job_table.php'); ?>
         </div>
 
         <!-- ปฏิทินหลัก: แสดง maintenance job ทั้งหมด -->
         <!-- ใน <body> -->
         <div id="calendarMainView" class="view-container active">
-            <h4 class="text-center mt-3">📅 ปฏิทินงานซ่อมทั้งหมด</h4>
             <div id="calendar-legend" class="mb-3">
                 <div class="legend-left">
                     <span style="background-color: #10b981; padding: 5px 10px; border-radius: 4px;">🟢 In-house</span>
@@ -177,9 +176,9 @@ if (!isset($_SESSION['user_id'])) {
                 <!-- Legend แสดงสถานะ -->
                 <div id="calendar-legend">
                     <div class="legend-left">
-                        <span style="background-color: #facc15; padding: 5px 10px; border-radius: 4px; margin-right: 10px;">🟡 รอดำเนินการ</span>
-                        <span style="background-color: #3b82f6; padding: 5px 10px; border-radius: 4px; margin-right: 10px;">🔵 กำลังดำเนินการ</span>
-                        <span style="background-color: #10b981; padding: 5px 10px; border-radius: 4px;">✅ เสร็จแล้ว</span>
+                        <span style="background-color: #facc15; padding: 5px 10px; border-radius: 4px; margin-right: 10px;">🟡 Pending</span>
+                        <span style="background-color: #3b82f6; padding: 5px 10px; border-radius: 4px; margin-right: 10px;">🔵 In-progess</span>
+                        <span style="background-color: #10b981; padding: 5px 10px; border-radius: 4px;">✅ Sucess</span>
                     </div>
                     <div class="legend-right">
                         <label for="statusFilter" class="me-2">กรองตามสถานะ: </label>
@@ -278,6 +277,7 @@ if (!isset($_SESSION['user_id'])) {
                     const events = await fetchCalendarEvents('../backend/calendar-events-main.php', {
                         start: fetchInfo.startStr,
                         end: fetchInfo.endStr
+                       
                     });
                     successCallback(events);
                 },
@@ -306,6 +306,7 @@ if (!isset($_SESSION['user_id'])) {
                     const events = await fetchCalendarEvents('../backend/calendar-events.php', {
                         start: fetchInfo.startStr,
                         end: fetchInfo.endStr,
+                    
                         status: status
                     });
                     successCallback(events);
@@ -361,10 +362,12 @@ if (!isset($_SESSION['user_id'])) {
                 html: `
             <b>🆔 Maintenance ID:</b> ${info.event.id}<br>
             <b>📄 รายละเอียด:</b> ${info.event.title}<br>
-            <b>🗓️ วันที่:</b> ${info.event.startStr}<br>
-            ${info.event.endStr ? `<b>📅 สิ้นสุด:</b> ${info.event.endStr}` : ''}
-            <br><a href="detail.php?id=${info.event.id}" class="btn btn-primary mt-2">🔍 ดูรายละเอียด</a>
+            <b>📍 Status:</b> ${info.event.extendedProps.result || '❓ Unknow'}<br>
+           <br><a href="detail.php?id=${info.event.id}&start=${info.event.startStr}" class="btn btn-primary mt-2">🔍 ดูรายละเอียด</a>
+
         `,
+        // <b>🗓️ วันที่:</b> ${info.event.startStr}<br>
+        //${info.event.endStr ? `<b>📅 สิ้นสุด:</b> ${info.event.endStr}` : ''}
                 icon: 'info',
                 confirmButtonText: 'ปิด'
             });

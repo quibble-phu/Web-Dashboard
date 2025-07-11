@@ -7,30 +7,60 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $maintenance_id = $_GET['id'] ?? null;
+$event_start = $_GET['start'] ?? null; // ดึงวันเริ่มงานมาด้วยจาก calendar
+
 if (!$maintenance_id) {
     echo "ไม่พบรหัสงานซ่อม";
     exit;
 }
 
-// Query ข้อมูลหลัก
-$stmt = $pdo->prepare("
-    SELECT 
-        mj.maintenance_id,
-        mj.description,
-        mj.machine_id,
-        m.machine_name,
-        w.assign_date,
-        w.start_date,
-        w.end_date,
-        CONCAT(e.first_name, ' ', e.last_name) AS technician
-    FROM maintenance_job mj
-    LEFT JOIN work w ON mj.maintenance_id = w.maintenance_id
-    LEFT JOIN employee e ON w.user_id = e.user_id
-    LEFT JOIN machine m ON mj.machine_id = m.machine_id
-    WHERE mj.maintenance_id = ?
-");
-$stmt->execute([$maintenance_id]);
-$data = $stmt->fetch();
+// ตรวจสอบว่า start นี้มีอยู่ในตาราง work จริงหรือไม่
+$stmtCheck = $pdo->prepare("SELECT * FROM work WHERE maintenance_id = ? AND assign_date = ?");
+$stmtCheck->execute([$maintenance_id, $event_start]);
+$workRow = $stmtCheck->fetch();
+
+// ถ้าเจอข้อมูลใน work แสดงตามจริง
+if ($workRow) {
+    $stmt = $pdo->prepare("
+        SELECT 
+            mj.maintenance_id,
+            mj.description,
+            mj.machine_id,
+            m.machine_name,
+            w.assign_date,
+            w.start_date,
+            w.end_date,
+            CONCAT(e.first_name, ' ', e.last_name) AS technician
+        FROM maintenance_job mj
+        LEFT JOIN work w ON mj.maintenance_id = w.maintenance_id AND w.assign_date = ?
+        LEFT JOIN employee e ON w.user_id = e.user_id
+        LEFT JOIN machine m ON mj.machine_id = m.machine_id
+        WHERE mj.maintenance_id = ?
+    ");
+    $stmt->execute([$event_start, $maintenance_id]);
+    $data = $stmt->fetch();
+} else {
+    // งานจาก period ที่ยังไม่มีใน work
+    $stmt = $pdo->prepare("
+        SELECT 
+            mj.maintenance_id,
+            mj.description,
+            mj.machine_id,
+            m.machine_name
+        FROM maintenance_job mj
+        LEFT JOIN machine m ON mj.machine_id = m.machine_id
+        WHERE mj.maintenance_id = ?
+    ");
+    $stmt->execute([$maintenance_id]);
+    $data = $stmt->fetch();
+
+    // set ค่าอื่น ๆ เป็น null หรือ false เพื่อบอกว่าเป็น future
+    $data['assign_date'] = null;
+    $data['start_date'] = null;
+    $data['end_date'] = null;
+    $data['technician'] = null;
+}
+
 
 // Query รายการอะไหล่
 $stmt_parts = $pdo->prepare("
@@ -69,30 +99,52 @@ $parts = $stmt_parts->fetchAll();
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>🆔 รหัสงานซ่อม:</strong> <?= htmlspecialchars($data['maintenance_id']) ?></p>
-                            <p><strong>📄 รายละเอียด:</strong> <?= htmlspecialchars($data['description']) ?></p>
-                            <p><strong>🏭 รหัสเครื่องจักร:</strong> <?= htmlspecialchars($data['machine_id']) ?> - <?= htmlspecialchars($data['machine_name']) ?></p>
-                            <p><strong>👷‍♂️ ช่างที่รับผิดชอบ:</strong> <?= $data['technician'] ?: '-' ?></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>🗓️ วันที่มอบหมาย:</strong> <?= $data['assign_date'] ?: '-' ?></p>
-                            <p><strong>🕒 วันที่เริ่ม:</strong> <?= $data['start_date'] ?: '-' ?></p>
-                            <p><strong>✅ วันที่เสร็จ:</strong> <?= $data['end_date'] ?: '-' ?></p>
-                            <p><strong>📌 สถานะ:</strong>
-                                <?php
-                                if ($data['end_date']) {
-                                    echo "✅ เสร็จแล้ว";
-                                } elseif ($data['start_date']) {
-                                    echo "🔵 กำลังดำเนินการ";
-                                } elseif ($data['assign_date']) {
-                                    echo "🟡 รอดำเนินการ";
-                                } else {
-                                    echo "❓ ไม่ระบุ";
-                                }
-                                ?>
-                            </p>
-                        </div>
+                        <?php
+                        $isFutureGenerated = !$data['assign_date'] && !$data['start_date'] && !$data['end_date'];
+                        ?>
+
+
+                        <?php if (!$isFutureGenerated): ?>
+                            <div class="col-md-6">
+                                <p><strong>🆔 รหัสงานซ่อม:</strong> <?= htmlspecialchars($data['maintenance_id']) ?></p>
+                                <p><strong>📄 รายละเอียด:</strong> <?= htmlspecialchars($data['description']) ?></p>
+                                <p><strong>🏭 รหัสเครื่องจักร:</strong> <?= htmlspecialchars($data['machine_id']) ?> - <?= htmlspecialchars($data['machine_name']) ?></p>
+                                <p><strong>👷‍♂️ ช่างที่รับผิดชอบ:</strong> <?= $data['technician'] ?: '-' ?></p>
+                            </div>
+                            <div class="col-md-6">
+
+                                <p><strong>🗓️ วันที่มอบหมาย:</strong> <?= $data['assign_date'] ?: '-' ?></p>
+                                <p><strong>🕒 วันที่เริ่ม:</strong> <?= $data['start_date'] ?: '-' ?></p>
+                                <p><strong>✅ วันที่เสร็จ:</strong> <?= $data['end_date'] ?: '-' ?></p>
+                                <p><strong>📌 สถานะ:</strong>
+                                    <?php
+                                    if ($data['end_date']) {
+                                        echo "✅ เสร็จแล้ว";
+                                    } elseif ($data['start_date']) {
+                                        echo "🔵 กำลังดำเนินการ";
+                                    } elseif ($data['assign_date']) {
+                                        echo "🟡 รอดำเนินการ";
+                                    } else {
+                                        echo "❓ ไม่ระบุ";
+                                    }
+                                    ?>
+                                </p>
+                            </div>
+                        <?php else: ?>
+                            <div class="col-md-6">
+                                <p><strong>🆔 รหัสงานซ่อม:</strong> <?= htmlspecialchars($data['maintenance_id']) ?></p>
+                                <p><strong>📄 รายละเอียด:</strong> <?= htmlspecialchars($data['description']) ?></p>
+                                <p><strong>🏭 รหัสเครื่องจักร:</strong> <?= htmlspecialchars($data['machine_id']) ?> - <?= htmlspecialchars($data['machine_name']) ?></p>
+                                <p><strong>👷‍♂️ ช่างที่รับผิดชอบ:</strong> ข้อมูลจะปรากฏเมื่อมีการมอบหมาย</p>
+                            </div>
+                            <div class="col-md-6">
+                                    <p><strong>🗓️ วันที่มอบหมาย:</strong> -</p>
+                                    <p><strong>🕒 วันที่เริ่ม:</strong> -</p>
+                                    <p><strong>✅ วันที่เสร็จ:</strong> -</p>
+                                    <p><strong>📌 สถานะ:</strong> ยังไม่เริ่ม </p>
+                            </div>
+                        <?php endif; ?>
+
                     </div>
                     <hr>
                     <h3><strong> <i class="bi bi-box-seam-fill fs-4"></i> Part in used :</strong></h3>
